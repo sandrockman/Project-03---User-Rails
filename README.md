@@ -22,20 +22,20 @@ You will be creating two things:
 
 ##Level Creator
 1. After the user has created the level, there should be a menu option for them to export their level
-2. Movement/Effects/Facings only
-3. User-supplied name and author
-4. The option should create a text file with the appropriate information
-5. Name of Level
-6. Date it was created
-7. Author of the file
-8. Waypoints with options
-9. The user will then need to place this file inside a folder in the BUILT game data
-10. When the user runs the game, the game should read in all cursory information about each level in the folder
-11. Name, Date, Author
-12. Display the information inside of a menu
-13. Allow the user to select which level he/she wishes to play
-14. Include a default, embedded level in case there are no User-Generated levels
-15. Read the rest of the data for the level and display the level to the user 
+    1. Movement/Effects/Facings only
+    2. User-supplied name and author
+2. The option should create a text file with the appropriate information
+    1. Name of Level
+    2. Date it was created
+    3. Author of the file
+    4. Waypoints with options
+3. The user will then need to place this file inside a folder in the BUILT game data
+4. When the user runs the game, the game should read in all cursory information about each level in the folder
+    1. Name, Date, Author
+5. Display the information inside of a menu
+6. Allow the user to select which level he/she wishes to play
+    1. Include a default, embedded level in case there are no User-Generated levels
+7. Read the rest of the data for the level and display the level to the user 
 
 ##Points (30)
 
