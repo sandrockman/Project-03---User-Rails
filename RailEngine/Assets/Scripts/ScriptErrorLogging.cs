@@ -14,7 +14,7 @@ public static class ScriptErrorLogging{
 #else
         if(clearLog)
         {
-            File.WriteAllText(Application.dataPath + "/logFile.txt", errorText);
+            File.WriteAllText(Application.dataPath + "/logFile.txt", "[ERROR]: " + errorText);
         }
         else
         {

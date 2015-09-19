@@ -235,6 +235,10 @@ public class ScriptModSupport : MonoBehaviour
                                 break;
                             case FacingTypes.FREELOOK:
                                 //Free look for the camera
+                                tempFacing = new ScriptFacings();
+                                tempFacing.facingType = FacingTypes.FREELOOK;
+                                tempFacing.facingTime = System.Convert.ToSingle(words[1]);
+                                tempFacings.Add(tempFacing);
                                 break;
                                 //end @ mike
                         }

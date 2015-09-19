@@ -15,7 +15,7 @@ public class LevelExport : EditorWindow
     }
 
     static ScriptEngine engineScript;
-    List<string> outputText = new List<string>(0);
+    
     bool embedLevel = true;
     int levelNumber;
     string levelName;
@@ -49,8 +49,7 @@ public class LevelExport : EditorWindow
 
     void OnGUI()
     {
-        minSize = new Vector2(300, 300);
-        maxSize = minSize;
+        List<string> outputText = new List<string>(0);
 
         //EditorGUILayout on this looks like ass. Time to delve into EditorGUI
         //EditorGUILayout.BeginHorizontal();
@@ -60,6 +59,136 @@ public class LevelExport : EditorWindow
         //EditorGUILayout.BeginHorizontal();
         //EditorGUILayout.LabelField("Level Author");
         //levelAuthor = EditorGUILayout.TextField(levelAuthor);
+        float xOffset = 5f;
+        float yOffset = 22f;
+
+        Rect propertyPosition = new Rect(xOffset, yOffset, 75f, 15f);
         
+        
+        xOffset += 75f;
+        EditorGUI.LabelField(propertyPosition, "Level Name:");
+
+        propertyPosition = new Rect(xOffset, yOffset, 215f, 15f);
+        levelName = EditorGUI.TextField(propertyPosition, levelName);
+
+        xOffset = 5f;
+        yOffset += 17f;
+
+        propertyPosition = new Rect(xOffset, yOffset, 80f, 15f);
+        xOffset += 80f;
+        EditorGUI.LabelField(propertyPosition, "Level Author:");
+
+        propertyPosition = new Rect(xOffset, yOffset, 210f, 15f);
+        levelAuthor = EditorGUI.TextField(propertyPosition, levelAuthor);
+
+        outputText.Add( "Level Name:" + levelName);
+        outputText.Add( "Level Author:" + levelAuthor);
+
+
+        foreach (ScriptMovements move in engineScript.movements)
+        {
+            switch (move.moveType)
+            {
+                case MovementTypes.MOVE:
+                    outputText.Add("M_MOVE " + move.movementTime + " " +
+                        move.endWaypoint.transform.position.x + "," +
+                        move.endWaypoint.transform.position.y + "," +
+                        move.endWaypoint.transform.position.z);
+                    break;
+                case MovementTypes.WAIT:
+                    outputText.Add("M_WAIT " + move.movementTime);
+                    break;
+                case MovementTypes.BEZIER:
+                    outputText.Add("M_MOVE " + move.movementTime + " " +
+                        move.endWaypoint.transform.position.x + "," +
+                        move.endWaypoint.transform.position.y + "," +
+                        move.endWaypoint.transform.position.z + " " +
+                        move.curveWaypoint.transform.position.x + "," +
+                        move.curveWaypoint.transform.position.y + "," +
+                        move.curveWaypoint.transform.position.z);
+                    break;
+            }
+        }
+
+        foreach (ScriptEffects effect in engineScript.effects)
+        {
+            switch(effect.effectType)
+            {
+                case EffectTypes.WAIT:
+                    outputText.Add("E_WAIT " + effect.effectTime);
+                    break;
+                case EffectTypes.FADE:
+                    outputText.Add("E_FADE " + effect.effectTime + " " + effect.fadeInTime + " " +
+                        effect.fadeOutTime);
+                    break;
+                case EffectTypes.SPLATTER:
+                    outputText.Add("E_SPLATTER " + effect.effectTime + " " + effect.fadeInTime +
+                        " " + effect.fadeOutTime + " " + effect.imageScale);
+                    break;
+                case EffectTypes.SHAKE:
+                    outputText.Add("E_SHAKE " + effect.effectTime + " " + effect.magnitude);
+                    break;
+            }
+        }
+        foreach(ScriptFacings facing in engineScript.facings)
+        {
+            string tempString;
+            switch(facing.facingType)
+            {
+                case FacingTypes.WAIT:
+                    outputText.Add("F_WAIT " + facing.facingType);
+                    break;
+                case FacingTypes.LOOKAT:
+                    tempString = "F_LOOKAT ";
+                    for (int i = 0; i < facing.targets.Length; i++)
+                    {
+                        tempString += (facing.rotationSpeed[i] + " " + facing.lockTimes[i] +
+                            " " + facing.targets[i]);
+                    }
+                    tempString += facing.rotationSpeed[facing.rotationSpeed.Length - 1];
+                    outputText.Add(tempString);
+                    break;
+                case FacingTypes.LOOKCHAIN:
+                    tempString = "F_LOOKCHAIN ";
+                    for (int i = 0; i < facing.targets.Length; i++)
+                    {
+                        tempString += (facing.rotationSpeed[i] + " " + facing.lockTimes[i] +
+                            " " + facing.targets[i]);
+                    }
+                    tempString += facing.rotationSpeed[facing.rotationSpeed.Length - 1];
+                    outputText.Add(tempString);
+                    break;
+                case FacingTypes.FREELOOK:
+                    outputText.Add("F_FREELOOK " + facing.facingTime);
+                    break;
+            }
+        }
+
+        xOffset = 5f;
+        yOffset += 17f;
+        if(GUILayout.Button("Create Text File"))
+        {
+
+        }
+        propertyPosition = new Rect(xOffset, yOffset, 3000f, 15f);
+        EditorGUI.LabelField(propertyPosition, "Output Preview:");
+
+        foreach(string line in outputText)
+        {
+            yOffset += 17;
+            propertyPosition = new Rect(xOffset, yOffset, 3000f, 15f);
+            EditorGUI.LabelField(propertyPosition, line);
+        }
+        minSize = new Vector2(300, yOffset + 17);
+        maxSize = minSize;
+        
+    }
+
+    public void OnFocus()
+    {
+        if (engineScript == null)
+        {
+            Close();
+        }
     }
 }
