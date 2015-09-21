@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEditor;
 using System.Collections.Generic;
+using System.IO;
 
 /// <summary>
 /// @author Marshall Mason
@@ -15,6 +16,9 @@ public class LevelExport : EditorWindow
     }
 
     static ScriptEngine engineScript;
+    static int numEmbeded;
+    static int numModdable;
+    static FileInfo textFile;
     
     bool embedLevel = true;
     int levelNumber;
@@ -41,6 +45,16 @@ public class LevelExport : EditorWindow
             }
             else
             {
+                textFile = new FileInfo(Application.dataPath + "waypoints0.txt");
+                for (numEmbeded = 0; textFile.Exists; numEmbeded++)
+                {
+                    textFile = new FileInfo(Application.dataPath + "Resources/waypoints" + numEmbeded + ".txt");
+                } textFile = new FileInfo(Application.dataPath + "waypoints0.txt");
+                for (numModdable = 0; textFile.Exists; numModdable++)
+                {
+                    textFile = new FileInfo(Application.dataPath + "waypoints" + numModdable + ".txt");
+                }
+
                 LevelExport window = (LevelExport)EditorWindow.GetWindow(typeof(LevelExport));
                 window.Show();
             }
@@ -83,6 +97,7 @@ public class LevelExport : EditorWindow
 
         outputText.Add( "Level Name:" + levelName);
         outputText.Add( "Level Author:" + levelAuthor);
+        outputText.Add( "Created:" + System.DateTime.Today.ToString("d"));
 
 
         foreach (ScriptMovements move in engineScript.movements)
@@ -143,7 +158,9 @@ public class LevelExport : EditorWindow
                     for (int i = 0; i < facing.targets.Length; i++)
                     {
                         tempString += (facing.rotationSpeed[i] + " " + facing.lockTimes[i] +
-                            " " + facing.targets[i]);
+                            " " + facing.targets[i].transform.position.x + "," +
+                        facing.targets[i].transform.position.y + "," +
+                        facing.targets[i].transform.position.z);
                     }
                     tempString += facing.rotationSpeed[facing.rotationSpeed.Length - 1];
                     outputText.Add(tempString);
@@ -153,7 +170,9 @@ public class LevelExport : EditorWindow
                     for (int i = 0; i < facing.targets.Length; i++)
                     {
                         tempString += (facing.rotationSpeed[i] + " " + facing.lockTimes[i] +
-                            " " + facing.targets[i]);
+                            " " + facing.targets[i].transform.position.x + "," +
+                        facing.targets[i].transform.position.y + "," +
+                        facing.targets[i].transform.position.z);
                     }
                     tempString += facing.rotationSpeed[facing.rotationSpeed.Length - 1];
                     outputText.Add(tempString);
