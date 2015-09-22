@@ -29,7 +29,7 @@ public class LevelExport : EditorWindow
     {
         if (Selection.activeGameObject == null)
         {
-            System.Media.SystemSounds.Exclamation.Play();
+            System.Media.SystemSounds.Hand.Play();
             EditorUtility.DisplayDialog("No game object selected.",
                 "Please select a single game object with ScriptEngine and try again.", "Acknowledge");
         }
@@ -39,7 +39,7 @@ public class LevelExport : EditorWindow
 
             if (engineScript == null)
             {
-                System.Media.SystemSounds.Exclamation.Play();
+                System.Media.SystemSounds.Hand.Play();
                 EditorUtility.DisplayDialog("No ScriptEngine detected on selected object.",
                     "Please select a single game object with ScriptEngine and try again.", "Acknowledge");
             }
@@ -48,20 +48,13 @@ public class LevelExport : EditorWindow
                 textFile = new FileInfo(Application.dataPath + "/Resources/waypoints0.txt");
                 for (numEmbeded = 0; textFile.Exists; numEmbeded++)
                 {
-                    textFile = new FileInfo(Application.dataPath + "/Resources/waypoints" + numEmbeded + ".txt");
+                    textFile = new FileInfo(Application.dataPath + "/Resources/waypoints" + (1 + numEmbeded) + ".txt");
                 }
-                if (numEmbeded > 0)
-                {
-                    numEmbeded--;
-                }
+
                 textFile = new FileInfo(Application.dataPath + "/waypoints0.txt");
                 for (numModdable = 0; textFile.Exists; numModdable++)
                 {
-                    textFile = new FileInfo(Application.dataPath + "/waypoints" + numModdable + ".txt");
-                }
-                if (numModdable > 0)
-                {
-                    numModdable--; 
+                    textFile = new FileInfo(Application.dataPath + "/waypoints" + (1 + numModdable) + ".txt");
                 }
                 LevelExport window = (LevelExport)EditorWindow.GetWindow(typeof(LevelExport));
                 window.Show();
