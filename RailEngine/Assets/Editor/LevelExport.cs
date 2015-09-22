@@ -45,14 +45,15 @@ public class LevelExport : EditorWindow
             }
             else
             {
-                textFile = new FileInfo(Application.dataPath + "waypoints0.txt");
+                textFile = new FileInfo(Application.dataPath + "/Resources/waypoints0.txt");
                 for (numEmbeded = 0; textFile.Exists; numEmbeded++)
                 {
-                    textFile = new FileInfo(Application.dataPath + "Resources/waypoints" + numEmbeded + ".txt");
-                } textFile = new FileInfo(Application.dataPath + "waypoints0.txt");
+                    textFile = new FileInfo(Application.dataPath + "/Resources/waypoints" + numEmbeded + ".txt");
+                }
+                textFile = new FileInfo(Application.dataPath + "/waypoints0.txt");
                 for (numModdable = 0; textFile.Exists; numModdable++)
                 {
-                    textFile = new FileInfo(Application.dataPath + "waypoints" + numModdable + ".txt");
+                    textFile = new FileInfo(Application.dataPath + "/waypoints" + numModdable + ".txt");
                 }
 
                 LevelExport window = (LevelExport)EditorWindow.GetWindow(typeof(LevelExport));
@@ -65,20 +66,14 @@ public class LevelExport : EditorWindow
     {
         List<string> outputText = new List<string>(0);
 
-        //EditorGUILayout on this looks like ass. Time to delve into EditorGUI
-        //EditorGUILayout.BeginHorizontal();
-        //EditorGUILayout.LabelField("Level Name");
-        //levelName = EditorGUILayout.TextField(levelName);
-        //EditorGUILayout.EndHorizontal();
-        //EditorGUILayout.BeginHorizontal();
-        //EditorGUILayout.LabelField("Level Author");
-        //levelAuthor = EditorGUILayout.TextField(levelAuthor);
         float xOffset = 5f;
         float yOffset = 22f;
 
-        Rect propertyPosition = new Rect(xOffset, yOffset, 75f, 15f);
-        
-        
+        Rect propertyPosition = new Rect(xOffset, yOffset, 3000f, 15f);
+        yOffset += 17f;
+        embedLevel = EditorGUI.Toggle(propertyPosition, "Embed level in build", embedLevel);
+
+        propertyPosition = new Rect(xOffset, yOffset, 75f, 15f);
         xOffset += 75f;
         EditorGUI.LabelField(propertyPosition, "Level Name:");
 
@@ -187,7 +182,36 @@ public class LevelExport : EditorWindow
         yOffset += 17f;
         if(GUILayout.Button("Create Text File"))
         {
-
+            if (levelAuthor != null && levelName != null)
+            {
+                if (embedLevel)
+                {
+                    using (StreamWriter writer = new StreamWriter(Application.dataPath + "/Resources/waypoints" + numEmbeded + ".txt"))
+                    {
+                        foreach (string line in outputText)
+                        {
+                            writer.WriteLine(line);
+                        }
+                    }
+                    numEmbeded++;
+                }
+                else
+                {
+                    using (StreamWriter writer = new StreamWriter(Application.dataPath + "/waypoints" + numModdable + ".txt"))
+                    {
+                        foreach (string line in outputText)
+                        {
+                            writer.WriteLine(line);
+                        }
+                    }
+                    numModdable++;
+                }
+                AssetDatabase.Refresh();
+            }
+            else
+            {
+                Debug.Log("Level Name and Level Author cannot be blank.");
+            }
         }
         propertyPosition = new Rect(xOffset, yOffset, 3000f, 15f);
         EditorGUI.LabelField(propertyPosition, "Output Preview:");
