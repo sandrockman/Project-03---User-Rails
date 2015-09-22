@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 /*
  * @author Mike Dobson
@@ -7,10 +8,10 @@ using System.Collections;
 
 public class ScriptEngine : MonoBehaviour {
 
-	public ScriptMovements[] movements;
+	public List<ScriptMovements> movements;
 
-    public ScriptFacings[] facings;
-    public ScriptEffects[] effects;
+    public List<ScriptFacings> facings;
+    public List<ScriptEffects> effects;
 
     public ScriptCameraShake cameraShakeScript;
     public ScriptLookAtTarget lookAtScript;

@@ -245,6 +245,8 @@ public class ScriptModSupport : MonoBehaviour
                     }
                     inputLine = reader.ReadLine();
                 }
+
+				/*
                 player.movements = new ScriptMovements[tempMovements.Count];
                 for (int i = 0; i < tempMovements.Count; i++)
                 {
@@ -259,7 +261,10 @@ public class ScriptModSupport : MonoBehaviour
 				for (int i = 0; i < tempFacings.Count; i++)
                 {
                     player.facings[i] = tempFacings[i];
-                }
+                }//*/
+				player.movements = tempMovements;
+				player.effects = tempEffects;
+				player.facings = tempFacings;
 			}
         }
     }
