@@ -50,12 +50,13 @@ public class LevelExport : EditorWindow
                 {
                     textFile = new FileInfo(Application.dataPath + "/Resources/waypoints" + numEmbeded + ".txt");
                 }
+                numEmbeded--;
                 textFile = new FileInfo(Application.dataPath + "/waypoints0.txt");
                 for (numModdable = 0; textFile.Exists; numModdable++)
                 {
                     textFile = new FileInfo(Application.dataPath + "/waypoints" + numModdable + ".txt");
                 }
-
+                numModdable--;
                 LevelExport window = (LevelExport)EditorWindow.GetWindow(typeof(LevelExport));
                 window.Show();
             }
@@ -146,7 +147,7 @@ public class LevelExport : EditorWindow
             switch(facing.facingType)
             {
                 case FacingTypes.WAIT:
-                    outputText.Add("F_WAIT " + facing.facingType);
+                    outputText.Add("F_WAIT " + facing.facingTime);
                     break;
                 case FacingTypes.LOOKAT:
                     tempString = "F_LOOKAT ";
