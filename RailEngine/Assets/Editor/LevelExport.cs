@@ -50,13 +50,19 @@ public class LevelExport : EditorWindow
                 {
                     textFile = new FileInfo(Application.dataPath + "/Resources/waypoints" + numEmbeded + ".txt");
                 }
-                numEmbeded--;
+                if (numEmbeded > 0)
+                {
+                    numEmbeded--;
+                }
                 textFile = new FileInfo(Application.dataPath + "/waypoints0.txt");
                 for (numModdable = 0; textFile.Exists; numModdable++)
                 {
                     textFile = new FileInfo(Application.dataPath + "/waypoints" + numModdable + ".txt");
                 }
-                numModdable--;
+                if (numModdable > 0)
+                {
+                    numModdable--; 
+                }
                 LevelExport window = (LevelExport)EditorWindow.GetWindow(typeof(LevelExport));
                 window.Show();
             }
@@ -158,7 +164,7 @@ public class LevelExport : EditorWindow
                         facing.targets[i].transform.position.y + "," +
                         facing.targets[i].transform.position.z);
                     }
-                    tempString += facing.rotationSpeed[facing.rotationSpeed.Length - 1];
+                    tempString += (" " + facing.rotationSpeed[facing.rotationSpeed.Length - 1]);
                     outputText.Add(tempString);
                     break;
                 case FacingTypes.LOOKCHAIN:
@@ -170,7 +176,7 @@ public class LevelExport : EditorWindow
                         facing.targets[i].transform.position.y + "," +
                         facing.targets[i].transform.position.z);
                     }
-                    tempString += facing.rotationSpeed[facing.rotationSpeed.Length - 1];
+                    tempString += (" " + facing.rotationSpeed[facing.rotationSpeed.Length - 1]);
                     outputText.Add(tempString);
                     break;
                 case FacingTypes.FREELOOK:
