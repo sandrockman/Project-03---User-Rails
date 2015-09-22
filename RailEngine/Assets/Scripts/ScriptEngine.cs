@@ -8,10 +8,10 @@ using System.Collections.Generic;
 
 public class ScriptEngine : MonoBehaviour {
 
-	public List<ScriptMovements> movements;
+	public List<ScriptMovements> movements = new List<ScriptMovements>(0);
 
-    public List<ScriptFacings> facings;
-    public List<ScriptEffects> effects;
+    public List<ScriptFacings> facings = new List<ScriptFacings>(0);
+    public List<ScriptEffects> effects = new List<ScriptEffects>(0);
 
     public ScriptCameraShake cameraShakeScript;
     public ScriptLookAtTarget lookAtScript;
