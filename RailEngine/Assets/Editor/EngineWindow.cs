@@ -6,7 +6,7 @@ using UnityEditor;
 public class EngineWindow : EditorWindow {
 
 	static ScriptEngine engineScript;
-
+	Vector2 scroll = new Vector2();
 	List<ScriptMovements> movements;
 	List<ScriptFacings> facings;
 	List<ScriptEffects> effects;
@@ -46,6 +46,8 @@ public class EngineWindow : EditorWindow {
 		float currVertical = buffer;
 		float currHoriztonal = buffer;
 
+		scroll = EditorGUILayout.BeginScrollView(scroll,GUILayout.Width (position.width), GUILayout.Height (position.height));
+
 		#region MOVEMENT
 		//Rect moveRect = new Rect(buffer, buffer, elementWidth, elementHeight);
 		Rect mlabRect = new Rect(currHoriztonal, currVertical, 200f, 17f);
@@ -60,6 +62,8 @@ public class EngineWindow : EditorWindow {
 		if(movements.Count == 0)
 			movements.Add (new ScriptMovements());
 
+
+
 		Rect moveElementRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
 		moveFoldout = EditorGUI.Foldout(moveElementRect, moveFoldout, "move 0");
 		currVertical += 20f;
@@ -67,34 +71,78 @@ public class EngineWindow : EditorWindow {
 		currHoriztonal += 10f;
 		if(moveFoldout)
 		{
-			//Display the enum for the player to change -- uses EditorGUI.Popup
 
+			//Display the enum for the player to change -- uses EditorGUI.Popup
+			Rect moveTypeSelect = new Rect(currHoriztonal, currVertical, 200f, 17f);
+			movements[0].moveType = (MovementTypes)EditorGUI.EnumPopup(moveTypeSelect, movements[0].moveType);
+			currVertical += 20f;
+			currHoriztonal += 10f;
 
 			//THEN display settings for each movement type
 			switch(movements[0].moveType)
 			{
 				case MovementTypes.BEZIER:
-					Rect bezierTypeRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
-					EditorGUI.LabelField(bezierTypeRect, "Rawr");
+					//Rect bezierTypeRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
+					//EditorGUI.LabelField(bezierTypeRect, "BezierRawr");
+					//currVertical += 20f;
+					Rect bezTimeRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+					movements[0].movementTime = (float)
+						EditorGUI.FloatField(bezTimeRect, "Time to Move:", movements[0].movementTime);
 					currVertical += 20f;
 
-					//Editor.
+					Rect bezEndLabelRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+					EditorGUI.LabelField(bezEndLabelRect, "End Waypoint:");
+					currVertical += 20f;
+					Rect bezEndRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+					movements[0].endWaypoint = (GameObject)
+						EditorGUI.ObjectField(bezEndRect, movements[0].endWaypoint,typeof(GameObject), true);
+					currVertical += 20f;
+					
+					Rect bezCurLabelRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+					EditorGUI.LabelField(bezCurLabelRect, "Curve Waypoint:");
+					currVertical += 20f;
+					Rect bezCurRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+					movements[0].curveWaypoint = (GameObject)
+						EditorGUI.ObjectField(bezCurRect, movements[0].curveWaypoint,typeof(GameObject), true);
+					currVertical += 20f;
+				
 					break;
 				case MovementTypes.MOVE:
-					Rect moveTypeRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
-					EditorGUI.LabelField(moveTypeRect, "Rawr");
+					//Rect moveTypeRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
+					//EditorGUI.LabelField(moveTypeRect, "MoveRawr");
+					//currVertical += 20f;
+
+					Rect movTimeRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+					movements[0].movementTime = (float)
+						EditorGUI.FloatField(movTimeRect, "Time to Move:", movements[0].movementTime);
 					currVertical += 20f;
+				
+					Rect movEndLabelRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+					EditorGUI.LabelField(movEndLabelRect, "End Waypoint:");
+					currVertical += 20f;
+					Rect movEndRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+					movements[0].endWaypoint = (GameObject)
+						EditorGUI.ObjectField(movEndRect, movements[0].endWaypoint,typeof(GameObject), true);
+					currVertical += 20f;
+
 					break;
 				case MovementTypes.WAIT:
-					Rect waitTypeRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
-					EditorGUI.LabelField(waitTypeRect, "Rawr");
-					currVertical += 20f;
+					//Rect waitTypeRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
+					//EditorGUI.LabelField(waitTypeRect, "WaitRawr");
+					//currVertical += 20f;
+					
+				Rect mTimeRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+				movements[0].movementTime = (float)
+					EditorGUI.FloatField(mTimeRect, "Time to Move:", movements[0].movementTime);
+				currVertical += 20f;
+
 					break;
 				default:
 					Debug.Log ("Oh, Crap! something done broke!");
 					break;
 			}
 		}
+		currHoriztonal -= 10f;
 		#endregion
 
 		#region FACINGS
@@ -113,9 +161,9 @@ public class EngineWindow : EditorWindow {
 
 
 
-
+		//end of new code
 		#endregion
-
+		EditorGUILayout.EndScrollView();
 		#region Original Code
 		//Color deepGray = new Color(0.8f, 0.8f, 0.8f, 1f);
 		//int mainOffset = 10;
