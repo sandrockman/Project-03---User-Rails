@@ -192,6 +192,11 @@ public class ScriptEngine : MonoBehaviour {
                     break;
                 case FacingTypes.FREELOOK:
 
+					//Do the free look action
+					lookAtScript.RunFreeLook(facing.facingTime);
+					//Wait for the specified amount of time to do free looking
+					yield return new WaitForSeconds(facing.facingTime);
+
                     break;
                 default:
                     ScriptErrorLogging.logError("Invalid movement type!");
