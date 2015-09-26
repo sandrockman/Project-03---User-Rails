@@ -1,4 +1,4 @@
-Level Name:MoveTest
+Level Name:Move Test
 Level Author:Mike Dobson
 Created:9/26/2015
 M_MOVE 3 17,0,0

@@ -1,5 +1,5 @@
-Level Name:MoveTest
-Level Author:Mike Dobson
+Level Name:Scroll Test 2
+Level Author:Scroll Test
 Created:9/26/2015
 M_MOVE 3 17,0,0
 M_BEZIER 5 18.65,0,16.61 28.64,0,0.47
