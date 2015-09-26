@@ -77,13 +77,71 @@ public class ScriptLevelSelection : MonoBehaviour
         RefreshDisplay();
     }
 
-    public void _SelectMod1()
+    void RefreshDisplay()
     {
 
     }
 
-    void RefreshDisplay()
+    public void _SelectMod1()
     {
+        using (StreamReader reader = new StreamReader(Application.dataPath + "/waypoints" + (curMod) + ".txt"))
+        {
+            CopyLevel(reader);
+        }
+    }
 
+    public void _SelectMod2()
+    {
+        using (StreamReader reader = new StreamReader(Application.dataPath + "/waypoints" + (curMod + 1) + ".txt"))
+        {
+            CopyLevel(reader);
+        }
+    }
+
+    public void _SelectMod3()
+    {
+        using (StreamReader reader = new StreamReader(Application.dataPath + "/waypoints" + (curMod + 2) + ".txt"))
+        {
+            CopyLevel(reader);
+        }
+    }
+
+    public void _SelectEmbeded1()
+    {
+        TextAsset file = (TextAsset)Resources.Load("waypoints" + (curEmbeded), typeof(TextAsset));
+        using (StreamReader reader = new StreamReader(file.text))
+        {
+            CopyLevel(reader);
+        }
+    }
+
+    public void _SelectEmbeded2()
+    {
+        TextAsset file = (TextAsset)Resources.Load("waypoints" + (curEmbeded + 1), typeof(TextAsset));
+        using (StreamReader reader = new StreamReader(file.text))
+        {
+            CopyLevel(reader);
+        }
+    }
+
+    public void _SelectEmbeded3()
+    {
+        TextAsset file = (TextAsset)Resources.Load("waypoints" + (curEmbeded + 2), typeof(TextAsset));
+        using (StreamReader reader = new StreamReader(file.text))
+        {
+            CopyLevel(reader);
+        }
+    }
+
+    void CopyLevel(StreamReader reader)
+    {
+        using (StreamWriter writer = new StreamWriter(Application.dataPath + "waypoints.txt"))
+        {
+            string tempLine;
+            while ((tempLine = reader.ReadLine()) != null)
+            {
+                writer.WriteLine(tempLine);
+            }
+        }
     }
 }
