@@ -19,6 +19,11 @@ public class EngineEditor :  Editor
 
 	public override void OnInspectorGUI()
 	{
+		if (GUILayout.Button ("Open Window")) 
+		{
+			EngineWindow.Init ();
+		}
+
 		//required things for arrays
 		serializedObject.Update ();
 
