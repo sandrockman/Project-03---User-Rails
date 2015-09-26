@@ -150,6 +150,14 @@ public class LevelExport : EditorWindow
                     break;
                 case FacingTypes.LOOKAT:
                     tempString = "F_LOOKAT ";
+                    if (facing.turnPlayer)
+                    {
+                        tempString += "PLAYER ";
+                    }
+                    else
+                    {
+                        tempString += "CAMERA ";
+                    }
                     for (int i = 0; i < facing.targets.Length; i++)
                     {
                         tempString += (facing.rotationSpeed[i] + " " + facing.lockTimes[i] +
@@ -162,6 +170,14 @@ public class LevelExport : EditorWindow
                     break;
                 case FacingTypes.LOOKCHAIN:
                     tempString = "F_LOOKCHAIN ";
+                    if (facing.turnPlayer)
+                    {
+                        tempString += "PLAYER ";
+                    }
+                    else
+                    {
+                        tempString += "CAMERA ";
+                    }
                     for (int i = 0; i < facing.targets.Length; i++)
                     {
                         tempString += (facing.rotationSpeed[i] + " " + facing.lockTimes[i] +

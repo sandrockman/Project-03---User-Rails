@@ -17,4 +17,5 @@ public class ScriptFacings
 	public float[] lockTimes;
 
     public float facingTime;
+    public bool turnPlayer;
 }

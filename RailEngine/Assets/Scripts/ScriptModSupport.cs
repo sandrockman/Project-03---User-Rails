@@ -182,19 +182,31 @@ public class ScriptModSupport : MonoBehaviour
 							case FacingTypes.LOOKCHAIN:
                                 //Look At waypoint spawning Code
                                 tempFacing = new ScriptFacings();
-							tempFacing.facingType = (FacingTypes)System.Enum.Parse(typeof(FacingTypes), words[0].ToUpper());
-							System.Collections.Generic.List<float> tempRotationSpeed = new System.Collections.Generic.List<float>(0);
-							System.Collections.Generic.List<float> tempLockTimes = new System.Collections.Generic.List<float>(0);
-							System.Collections.Generic.List<GameObject> tempTargets = new System.Collections.Generic.List<GameObject>(0);
-                                for (int i = 1; i < words.Length; i++ )
+							    tempFacing.facingType = (FacingTypes)System.Enum.Parse(typeof(FacingTypes), words[0].ToUpper());
+                                if (words[1].ToUpper() == "CAMERA")
                                 {
-                                    if (i % 3 == 1)
+                                    tempFacing.turnPlayer = false;
+                                }
+                                else
+                                {
+                                    tempFacing.turnPlayer = true;
+                                    if (words[1].ToUpper() != "PLAYER")
+                                    {
+                                        ScriptErrorLogging.logError("Defaulting facing action to player rotation.");
+                                    }
+                                }
+							    System.Collections.Generic.List<float> tempRotationSpeed = new System.Collections.Generic.List<float>(0);
+							    System.Collections.Generic.List<float> tempLockTimes = new System.Collections.Generic.List<float>(0);
+							    System.Collections.Generic.List<GameObject> tempTargets = new System.Collections.Generic.List<GameObject>(0);
+                                for (int i = 2; i < words.Length; i++ )
+                                {
+                                    if (i % 3 == 2)
                                     {
 	                                    
 										tempRotationSpeed.Add (System.Convert.ToSingle(words[i]));
 	                                	
 									}
-                                    else if(i % 3 == 2)
+                                    else if(i % 3 == 0)
                                     {
 									    tempLockTimes.Add (System.Convert.ToSingle(words[i]));
 									}
