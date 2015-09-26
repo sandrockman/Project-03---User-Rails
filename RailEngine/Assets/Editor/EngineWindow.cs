@@ -2,15 +2,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
-
+/// <summary>
+/// @author Victor Haskins
+/// class EngineWindow
+/// </summary>
 public class EngineWindow : EditorWindow {
 
 	static ScriptEngine engineScript;
-	Vector2 scroll = new Vector2();
+	Vector2 scroll;// = new Vector2();
 	List<ScriptMovements> movements;
 	List<ScriptFacings> facings;
 	List<ScriptEffects> effects;
 	bool moveFoldout = false;
+	bool faceFoldout = false;
+	bool effectFoldout = false;
+	float windowHeight = 0;
 
 
 	public static void Init()
@@ -46,8 +52,80 @@ public class EngineWindow : EditorWindow {
 		float currVertical = buffer;
 		float currHoriztonal = buffer;
 
-		scroll = EditorGUILayout.BeginScrollView(scroll,GUILayout.Width (position.width), GUILayout.Height (position.height));
+		scroll = EditorGUILayout.BeginScrollView(scroll, false, true, GUILayout.Width (position.width), GUILayout.Height (position.height));
+		//start window
+		EditorGUILayout.BeginHorizontal();
+		//start movement waypoint window
+		EditorGUILayout.BeginVertical();
 
+		if(movements.Count == 0)
+			movements.Add (new ScriptMovements());
+		EditorGUILayout.LabelField("Movement Waypoints");
+		EditorGUILayout.LabelField("Size: " + movements.Count);
+		moveFoldout = EditorGUILayout.Foldout(moveFoldout, "list");
+		if(moveFoldout)
+		{
+			EditorGUI.indentLevel++;
+
+			for(int i = 0; i < movements.Count; i++)
+			{
+				movements[i].moveType = (MovementTypes)EditorGUILayout.EnumPopup(movements[i].moveType);
+			}
+
+			EditorGUI.indentLevel--;
+		}
+
+		EditorGUILayout.EndVertical();
+		//end movement waypoint window
+		//start facing waypoint window
+		EditorGUILayout.BeginVertical();
+
+		if(facings.Count == 0)
+			facings.Add (new ScriptFacings());
+		EditorGUILayout.LabelField("Facing Waypoints");
+		EditorGUILayout.LabelField("Size: " + facings.Count);
+		faceFoldout = EditorGUILayout.Foldout(faceFoldout, "list");
+		if(faceFoldout)
+		{
+			EditorGUI.indentLevel++;
+
+			for(int i = 0; i < facings.Count; i++)
+			{
+				facings[i].facingType = (FacingTypes)EditorGUILayout.EnumPopup(facings[i].facingType);
+
+			}
+
+			EditorGUI.indentLevel--;
+		}
+
+		EditorGUILayout.EndVertical();
+		//end facing waypoint window
+		//start effects waypoint window
+		EditorGUILayout.BeginVertical();
+
+		if(effects.Count == 0)
+			effects.Add (new ScriptEffects());
+		EditorGUILayout.LabelField("Effect Waypoints");
+		EditorGUILayout.LabelField("Size: " + effects.Count);
+		effectFoldout = EditorGUILayout.Foldout(effectFoldout, "list");
+		if(effectFoldout)
+		{
+			EditorGUI.indentLevel++;
+
+			for(int i = 0; i < effects.Count; i++)
+			{
+				effects[i].effectType = (EffectTypes)EditorGUILayout.EnumPopup(effects[i].effectType);
+
+			}
+
+			EditorGUI.indentLevel--;
+		}
+
+		EditorGUILayout.EndVertical();
+		//end effects waypoint window
+		EditorGUILayout.EndHorizontal();
+		//end overall window
+		/*
 		#region MOVEMENT
 		//Rect moveRect = new Rect(buffer, buffer, elementWidth, elementHeight);
 		Rect mlabRect = new Rect(currHoriztonal, currVertical, 200f, 17f);
@@ -71,78 +149,86 @@ public class EngineWindow : EditorWindow {
 		currHoriztonal += 10f;
 		if(moveFoldout)
 		{
-
-			//Display the enum for the player to change -- uses EditorGUI.Popup
-			Rect moveTypeSelect = new Rect(currHoriztonal, currVertical, 200f, 17f);
-			movements[0].moveType = (MovementTypes)EditorGUI.EnumPopup(moveTypeSelect, movements[0].moveType);
-			currVertical += 20f;
-			currHoriztonal += 10f;
-
-			//THEN display settings for each movement type
-			switch(movements[0].moveType)
+			for(int i = 0; i < movements.Count; i++)
 			{
-				case MovementTypes.BEZIER:
-					//Rect bezierTypeRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
-					//EditorGUI.LabelField(bezierTypeRect, "BezierRawr");
-					//currVertical += 20f;
-					Rect bezTimeRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-					movements[0].movementTime = (float)
-						EditorGUI.FloatField(bezTimeRect, "Time to Move:", movements[0].movementTime);
-					currVertical += 20f;
 
-					Rect bezEndLabelRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-					EditorGUI.LabelField(bezEndLabelRect, "End Waypoint:");
-					currVertical += 20f;
-					Rect bezEndRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-					movements[0].endWaypoint = (GameObject)
-						EditorGUI.ObjectField(bezEndRect, movements[0].endWaypoint,typeof(GameObject), true);
-					currVertical += 20f;
-					
-					Rect bezCurLabelRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-					EditorGUI.LabelField(bezCurLabelRect, "Curve Waypoint:");
-					currVertical += 20f;
-					Rect bezCurRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-					movements[0].curveWaypoint = (GameObject)
-						EditorGUI.ObjectField(bezCurRect, movements[0].curveWaypoint,typeof(GameObject), true);
-					currVertical += 20f;
-				
-					break;
-				case MovementTypes.MOVE:
-					//Rect moveTypeRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
-					//EditorGUI.LabelField(moveTypeRect, "MoveRawr");
-					//currVertical += 20f;
-
-					Rect movTimeRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-					movements[0].movementTime = (float)
-						EditorGUI.FloatField(movTimeRect, "Time to Move:", movements[0].movementTime);
-					currVertical += 20f;
-				
-					Rect movEndLabelRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-					EditorGUI.LabelField(movEndLabelRect, "End Waypoint:");
-					currVertical += 20f;
-					Rect movEndRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-					movements[0].endWaypoint = (GameObject)
-						EditorGUI.ObjectField(movEndRect, movements[0].endWaypoint,typeof(GameObject), true);
-					currVertical += 20f;
-
-					break;
-				case MovementTypes.WAIT:
-					//Rect waitTypeRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
-					//EditorGUI.LabelField(waitTypeRect, "WaitRawr");
-					//currVertical += 20f;
-					
-				Rect mTimeRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-				movements[0].movementTime = (float)
-					EditorGUI.FloatField(mTimeRect, "Time to Move:", movements[0].movementTime);
+				//Display the enum for the player to change -- uses EditorGUI.Popup
+				Rect moveTypeSelect = new Rect(currHoriztonal, currVertical, 200f, 17f);
+				movements[i].moveType = (MovementTypes)EditorGUI.EnumPopup(moveTypeSelect, movements[i].moveType);
 				currVertical += 20f;
+				currHoriztonal += 10f;
 
-					break;
-				default:
-					Debug.Log ("Oh, Crap! something done broke!");
-					break;
-			}
-		}
-		currHoriztonal -= 10f;
+				//THEN display settings for each movement type
+				switch(movements[i].moveType)
+				{
+					case MovementTypes.BEZIER:
+						//Rect bezierTypeRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
+						//EditorGUI.LabelField(bezierTypeRect, "BezierRawr");
+						//currVertical += 20f;
+						Rect bezTimeRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+						movements[i].movementTime = (float)
+							EditorGUI.FloatField(bezTimeRect, "Time to Move:", movements[i].movementTime);
+						currVertical += 20f;
+
+						Rect bezEndLabelRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+						EditorGUI.LabelField(bezEndLabelRect, "End Waypoint:");
+						currVertical += 20f;
+						Rect bezEndRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+						movements[i].endWaypoint = (GameObject)
+							EditorGUI.ObjectField(bezEndRect, movements[i].endWaypoint,typeof(GameObject), true);
+						currVertical += 20f;
+					
+						Rect bezCurLabelRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+						EditorGUI.LabelField(bezCurLabelRect, "Curve Waypoint:");
+						currVertical += 20f;
+						Rect bezCurRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+						movements[i].curveWaypoint = (GameObject)
+							EditorGUI.ObjectField(bezCurRect, movements[i].curveWaypoint,typeof(GameObject), true);
+						currVertical += 20f;
+				
+						break;
+					case MovementTypes.MOVE:
+						//Rect moveTypeRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
+						//EditorGUI.LabelField(moveTypeRect, "MoveRawr");
+						//currVertical += 20f;
+
+						Rect movTimeRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+						movements[i].movementTime = (float)
+							EditorGUI.FloatField(movTimeRect, "Time to Move:", movements[i].movementTime);
+						currVertical += 20f;
+					
+						Rect movEndLabelRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+						EditorGUI.LabelField(movEndLabelRect, "End Waypoint:");
+						currVertical += 20f;
+						Rect movEndRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+						movements[i].endWaypoint = (GameObject)
+							EditorGUI.ObjectField(movEndRect, movements[i].endWaypoint,typeof(GameObject), true);
+						currVertical += 20f;
+
+						break;
+					case MovementTypes.WAIT:
+						//Rect waitTypeRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
+						//EditorGUI.LabelField(waitTypeRect, "WaitRawr");
+						//currVertical += 20f;
+					
+					Rect mTimeRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+					movements[i].movementTime = (float)
+						EditorGUI.FloatField(mTimeRect, "Time to Move:", movements[i].movementTime);
+					currVertical += 20f;
+
+						break;
+					default:
+						Debug.Log ("Oh, Crap! something done broke!");
+						break;
+				}//end switch statement for single elements
+				Rect addButtonRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
+				EditorGUI.
+
+				currHoriztonal -= 10f;
+			}//end for loop for all elements
+			currHoriztonal -= 10f;
+
+		}//end if statement for Movement foldout.
 		#endregion
 
 		#region FACINGS
@@ -158,7 +244,7 @@ public class EngineWindow : EditorWindow {
 		EditorGUI.LabelField(elabRect, "EFFECT WAYPOINTS");
 		#endregion
 
-
+		//*/
 
 
 		//end of new code
