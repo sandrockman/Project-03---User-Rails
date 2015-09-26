@@ -182,19 +182,31 @@ public class ScriptModSupport : MonoBehaviour
 							case FacingTypes.LOOKCHAIN:
                                 //Look At waypoint spawning Code
                                 tempFacing = new ScriptFacings();
-							tempFacing.facingType = (FacingTypes)System.Enum.Parse(typeof(FacingTypes), words[0].ToUpper());
-							System.Collections.Generic.List<float> tempRotationSpeed = new System.Collections.Generic.List<float>(0);
-							System.Collections.Generic.List<float> tempLockTimes = new System.Collections.Generic.List<float>(0);
-							System.Collections.Generic.List<GameObject> tempTargets = new System.Collections.Generic.List<GameObject>(0);
-                                for (int i = 1; i < words.Length; i++ )
+							    tempFacing.facingType = (FacingTypes)System.Enum.Parse(typeof(FacingTypes), words[0].ToUpper());
+                                if (words[1].ToUpper() == "CAMERA")
                                 {
-                                    if (i % 3 == 1)
+                                    tempFacing.turnPlayer = false;
+                                }
+                                else
+                                {
+                                    tempFacing.turnPlayer = true;
+                                    if (words[1].ToUpper() != "PLAYER")
+                                    {
+                                        ScriptErrorLogging.logError("Defaulting facing action to player rotation.");
+                                    }
+                                }
+							    System.Collections.Generic.List<float> tempRotationSpeed = new System.Collections.Generic.List<float>(0);
+							    System.Collections.Generic.List<float> tempLockTimes = new System.Collections.Generic.List<float>(0);
+							    System.Collections.Generic.List<GameObject> tempTargets = new System.Collections.Generic.List<GameObject>(0);
+                                for (int i = 2; i < words.Length; i++ )
+                                {
+                                    if (i % 3 == 2)
                                     {
 	                                    
 										tempRotationSpeed.Add (System.Convert.ToSingle(words[i]));
 	                                	
 									}
-                                    else if(i % 3 == 2)
+                                    else if(i % 3 == 0)
                                     {
 									    tempLockTimes.Add (System.Convert.ToSingle(words[i]));
 									}
@@ -235,12 +247,18 @@ public class ScriptModSupport : MonoBehaviour
                                 break;
                             case FacingTypes.FREELOOK:
                                 //Free look for the camera
+                                tempFacing = new ScriptFacings();
+                                tempFacing.facingType = FacingTypes.FREELOOK;
+                                tempFacing.facingTime = System.Convert.ToSingle(words[1]);
+                                tempFacings.Add(tempFacing);
                                 break;
                                 //end @ mike
                         }
                     }
                     inputLine = reader.ReadLine();
                 }
+
+				/*
                 player.movements = new ScriptMovements[tempMovements.Count];
                 for (int i = 0; i < tempMovements.Count; i++)
                 {
@@ -255,7 +273,10 @@ public class ScriptModSupport : MonoBehaviour
 				for (int i = 0; i < tempFacings.Count; i++)
                 {
                     player.facings[i] = tempFacings[i];
-                }
+                }//*/
+				player.movements = tempMovements;
+				player.effects = tempEffects;
+				player.facings = tempFacings;
 			}
         }
     }

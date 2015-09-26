@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 /*
 *   @author Mike Dobson
@@ -16,4 +17,5 @@ public class ScriptFacings
 	public float[] lockTimes;
 
     public float facingTime;
+    public bool turnPlayer;
 }
