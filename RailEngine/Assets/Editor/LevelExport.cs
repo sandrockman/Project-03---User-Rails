@@ -29,7 +29,7 @@ public class LevelExport : EditorWindow
     {
         if (Selection.activeGameObject == null)
         {
-            System.Media.SystemSounds.Exclamation.Play();
+            System.Media.SystemSounds.Hand.Play();
             EditorUtility.DisplayDialog("No game object selected.",
                 "Please select a single game object with ScriptEngine and try again.", "Acknowledge");
         }
@@ -39,7 +39,7 @@ public class LevelExport : EditorWindow
 
             if (engineScript == null)
             {
-                System.Media.SystemSounds.Exclamation.Play();
+                System.Media.SystemSounds.Hand.Play();
                 EditorUtility.DisplayDialog("No ScriptEngine detected on selected object.",
                     "Please select a single game object with ScriptEngine and try again.", "Acknowledge");
             }
@@ -48,14 +48,14 @@ public class LevelExport : EditorWindow
                 textFile = new FileInfo(Application.dataPath + "/Resources/waypoints0.txt");
                 for (numEmbeded = 0; textFile.Exists; numEmbeded++)
                 {
-                    textFile = new FileInfo(Application.dataPath + "/Resources/waypoints" + numEmbeded + ".txt");
+                    textFile = new FileInfo(Application.dataPath + "/Resources/waypoints" + (1 + numEmbeded) + ".txt");
                 }
+
                 textFile = new FileInfo(Application.dataPath + "/waypoints0.txt");
                 for (numModdable = 0; textFile.Exists; numModdable++)
                 {
-                    textFile = new FileInfo(Application.dataPath + "/waypoints" + numModdable + ".txt");
+                    textFile = new FileInfo(Application.dataPath + "/waypoints" + (1 + numModdable) + ".txt");
                 }
-
                 LevelExport window = (LevelExport)EditorWindow.GetWindow(typeof(LevelExport));
                 window.Show();
             }
@@ -146,10 +146,18 @@ public class LevelExport : EditorWindow
             switch(facing.facingType)
             {
                 case FacingTypes.WAIT:
-                    outputText.Add("F_WAIT " + facing.facingType);
+                    outputText.Add("F_WAIT " + facing.facingTime);
                     break;
                 case FacingTypes.LOOKAT:
                     tempString = "F_LOOKAT ";
+                    if (facing.turnPlayer)
+                    {
+                        tempString += "PLAYER ";
+                    }
+                    else
+                    {
+                        tempString += "CAMERA ";
+                    }
                     for (int i = 0; i < facing.targets.Length; i++)
                     {
                         tempString += (facing.rotationSpeed[i] + " " + facing.lockTimes[i] +
@@ -157,11 +165,19 @@ public class LevelExport : EditorWindow
                         facing.targets[i].transform.position.y + "," +
                         facing.targets[i].transform.position.z);
                     }
-                    tempString += facing.rotationSpeed[facing.rotationSpeed.Length - 1];
+                    tempString += (" " + facing.rotationSpeed[facing.rotationSpeed.Length - 1]);
                     outputText.Add(tempString);
                     break;
                 case FacingTypes.LOOKCHAIN:
                     tempString = "F_LOOKCHAIN ";
+                    if (facing.turnPlayer)
+                    {
+                        tempString += "PLAYER ";
+                    }
+                    else
+                    {
+                        tempString += "CAMERA ";
+                    }
                     for (int i = 0; i < facing.targets.Length; i++)
                     {
                         tempString += (facing.rotationSpeed[i] + " " + facing.lockTimes[i] +
@@ -169,7 +185,7 @@ public class LevelExport : EditorWindow
                         facing.targets[i].transform.position.y + "," +
                         facing.targets[i].transform.position.z);
                     }
-                    tempString += facing.rotationSpeed[facing.rotationSpeed.Length - 1];
+                    tempString += (" " + facing.rotationSpeed[facing.rotationSpeed.Length - 1]);
                     outputText.Add(tempString);
                     break;
                 case FacingTypes.FREELOOK:

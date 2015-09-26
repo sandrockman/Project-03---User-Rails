@@ -17,6 +17,7 @@ public class ScriptEngine : MonoBehaviour {
     public ScriptLookAtTarget lookAtScript;
     public ScriptScreenFade fadeScript;
     public ScriptSplatter splatterScript;
+    public ScriptLookAtTarget lookAtScriptPlayer;
 
     void Awake()
     {
@@ -24,7 +25,7 @@ public class ScriptEngine : MonoBehaviour {
         lookAtScript = Camera.main.GetComponent<ScriptLookAtTarget>();
         fadeScript = Camera.main.GetComponent<ScriptScreenFade>();
         splatterScript = Camera.main.GetComponent<ScriptSplatter>();
-
+        lookAtScriptPlayer = this.gameObject.GetComponent<ScriptLookAtTarget>();
     }
 
 	// Use this for initialization
@@ -163,31 +164,45 @@ public class ScriptEngine : MonoBehaviour {
             {
                 case FacingTypes.LOOKAT:
                     
-                        //Do the facing action
+                    //Do the facing action
+                    if (facing.turnPlayer)
+                    {
+                        lookAtScriptPlayer.Activate(facing.rotationSpeed, facing.targets, facing.lockTimes);
+                    }
+                    else
+                    {
                         lookAtScript.Activate(facing.rotationSpeed, facing.targets, facing.lockTimes);
-                        //Wait for the specified amount of time on the facing waypoint
-                        yield return new WaitForSeconds(facing.rotationSpeed[0] + facing.rotationSpeed[1] + facing.lockTimes[0]);
+                    }
+                    //Wait for the specified amount of time on the facing waypoint
+                    yield return new WaitForSeconds(facing.rotationSpeed[0] + facing.rotationSpeed[1] + facing.lockTimes[0]);
                     
                     break;
                 case FacingTypes.WAIT:
                     
-                        //Waits for the specified amount of time
-                        yield return new WaitForSeconds(facing.facingTime);
+                    //Waits for the specified amount of time
+                    yield return new WaitForSeconds(facing.facingTime);
                     
                     break;
                 case FacingTypes.LOOKCHAIN:
                     
-                        //Do the facing action
+                    //Do the facing action
+                    if (facing.turnPlayer)
+                    {
+                        lookAtScriptPlayer.Activate(facing.rotationSpeed, facing.targets, facing.lockTimes);
+                    }
+                    else
+                    {
                         lookAtScript.Activate(facing.rotationSpeed, facing.targets, facing.lockTimes);
-                        //Wait for the specified amount of time on the facing waypoint
-                        float waitTime = 0;
-                        for (int i = 0; i < facing.targets.Length; i++)
-                        {
-                            waitTime += facing.rotationSpeed[i];
-                            waitTime += facing.lockTimes[i];
-                        }
-                        waitTime += facing.rotationSpeed[facing.rotationSpeed.Length - 1];
-                        yield return new WaitForSeconds(waitTime);
+                    }
+                    //Wait for the specified amount of time on the facing waypoint
+                    float waitTime = 0;
+                    for (int i = 0; i < facing.targets.Length; i++)
+                    {
+                        waitTime += facing.rotationSpeed[i];
+                        waitTime += facing.lockTimes[i];
+                    }
+                    waitTime += facing.rotationSpeed[facing.rotationSpeed.Length - 1];
+                    yield return new WaitForSeconds(waitTime);
                     
                     break;
                 case FacingTypes.FREELOOK:

@@ -9,4 +9,4 @@ M_move 3 17,0,17
 M_bezier 4 0,0,0 17,0,0  
 M_bezier 4 0,0,0 17,0,0  
 f_wait 6
-f_lookat 2 3 0,0,0 2
+f_lookat camera 2 3 0,0,0 2
