@@ -368,7 +368,7 @@ MonoBehaviour:
     moveType: 0
     endWaypoint: {fileID: 0}
     curveWaypoint: {fileID: 0}
-    showInEditor: 0
+    showInEditor: 1
   - movementTime: 4
     moveType: 2
     endWaypoint: {fileID: 847086023}

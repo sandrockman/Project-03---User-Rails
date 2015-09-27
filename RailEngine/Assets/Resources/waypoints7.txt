@@ -1,6 +1,6 @@
-Level Name:Mod Test
-Level Author:Team MMA
-Created:9/22/2015
+Level Name:Mod Scroll Test 1
+Level Author:Scroll Test
+Created:9/26/2015
 M_MOVE 5 0,0,17
 M_WAIT 7
 M_MOVE 3 17,0,17

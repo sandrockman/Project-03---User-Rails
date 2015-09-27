@@ -27,38 +27,46 @@ public class LevelExport : EditorWindow
 
     static void Init()
     {
-        if (Selection.activeGameObject == null)
+        if (LevelTransitionCheck.IsSceneOrigional)
         {
-            System.Media.SystemSounds.Hand.Play();
-            EditorUtility.DisplayDialog("No game object selected.",
-                "Please select a single game object with ScriptEngine and try again.", "Acknowledge");
-        }
-        else
-        {
-            engineScript = Selection.activeGameObject.GetComponent<ScriptEngine>();
-
-            if (engineScript == null)
+            if (Selection.activeGameObject == null)
             {
                 System.Media.SystemSounds.Hand.Play();
-                EditorUtility.DisplayDialog("No ScriptEngine detected on selected object.",
+                EditorUtility.DisplayDialog("No game object selected.",
                     "Please select a single game object with ScriptEngine and try again.", "Acknowledge");
             }
             else
             {
-                textFile = new FileInfo(Application.dataPath + "/Resources/waypoints0.txt");
-                for (numEmbeded = 0; textFile.Exists; numEmbeded++)
-                {
-                    textFile = new FileInfo(Application.dataPath + "/Resources/waypoints" + (1 + numEmbeded) + ".txt");
-                }
+                engineScript = Selection.activeGameObject.GetComponent<ScriptEngine>();
 
-                textFile = new FileInfo(Application.dataPath + "/waypoints0.txt");
-                for (numModdable = 0; textFile.Exists; numModdable++)
+                if (engineScript == null)
                 {
-                    textFile = new FileInfo(Application.dataPath + "/waypoints" + (1 + numModdable) + ".txt");
+                    System.Media.SystemSounds.Hand.Play();
+                    EditorUtility.DisplayDialog("No ScriptEngine detected on selected object.",
+                        "Please select a single game object with ScriptEngine and try again.", "Acknowledge");
                 }
-                LevelExport window = (LevelExport)EditorWindow.GetWindow(typeof(LevelExport));
-                window.Show();
+                else
+                {
+                    textFile = new FileInfo(Application.dataPath + "/Resources/waypoints0.txt");
+                    for (numEmbeded = 0; textFile.Exists; numEmbeded++)
+                    {
+                        textFile = new FileInfo(Application.dataPath + "/Resources/waypoints" + (1 + numEmbeded) + ".txt");
+                    }
+
+                    textFile = new FileInfo(Application.dataPath + "/waypoints0.txt");
+                    for (numModdable = 0; textFile.Exists; numModdable++)
+                    {
+                        textFile = new FileInfo(Application.dataPath + "/waypoints" + (1 + numModdable) + ".txt");
+                    }
+                    LevelExport window = (LevelExport)EditorWindow.GetWindow(typeof(LevelExport));
+                    window.Show();
+                }
             }
+        }
+        else
+        {
+            EditorUtility.DisplayDialog("Scene Transitions not allowed",
+                "Level Export does not work during runtime after scene transitions.", "Acknowledge");
         }
     }
 
@@ -109,7 +117,7 @@ public class LevelExport : EditorWindow
                     outputText.Add("M_WAIT " + move.movementTime);
                     break;
                 case MovementTypes.BEZIER:
-                    outputText.Add("M_MOVE " + move.movementTime + " " +
+                    outputText.Add("M_BEZIER " + move.movementTime + " " +
                         move.endWaypoint.transform.position.x + "," +
                         move.endWaypoint.transform.position.y + "," +
                         move.endWaypoint.transform.position.z + " " +
