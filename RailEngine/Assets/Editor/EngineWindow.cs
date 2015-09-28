@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 /// <summary>
 /// @author Victor Haskins
-/// class EngineWindow
+/// class EngineWindow Custom Editor screen for the engineScript class
 /// </summary>
 public class EngineWindow : EditorWindow {
 
@@ -16,9 +16,10 @@ public class EngineWindow : EditorWindow {
 	bool moveFoldout = false;
 	bool faceFoldout = false;
 	bool effectFoldout = false;
-	float windowHeight = 0;
 
-
+    /**
+     * function init called to initialize the custom Editor script
+     */
 	public static void Init()
 	{
 		engineScript = Selection.activeGameObject.GetComponent<ScriptEngine> ();
@@ -27,6 +28,9 @@ public class EngineWindow : EditorWindow {
 		window.minSize = new Vector2(800.0f, 220.0f);
 	}
 
+    /**
+     * function OnFocus pulls information from the current engineScript lists
+     */
 	void OnFocus()
 	{
 		movements = engineScript.movements;
@@ -34,6 +38,9 @@ public class EngineWindow : EditorWindow {
 		effects = engineScript.effects;
 	}
 
+    /**
+     * function OnLostFocus() pushes information back to original script when not being used.
+     */
 	void OnLostFocus()
 	{
 		engineScript.movements = movements;
@@ -41,12 +48,13 @@ public class EngineWindow : EditorWindow {
 		engineScript.effects = effects;
 	}
 
+    /**
+     * function OnGUI custom display of information to the user
+     */
 	void OnGUI()
 	{	
 
 		#region new Code
-		float elementWidth = 250f;
-		float elementHeight = 200f;
 		float buffer =  10;
 
 		float currVertical = buffer;
@@ -58,242 +66,317 @@ public class EngineWindow : EditorWindow {
 		//start movement waypoint window
 		EditorGUILayout.BeginVertical();
 
+        //if no elements exist in the movements list add one 
 		if(movements.Count == 0)
 			movements.Add (new ScriptMovements());
+
+        //Overall Display
 		EditorGUILayout.LabelField("Movement Waypoints");
 		EditorGUILayout.LabelField("Size: " + movements.Count);
+
+        //fold out the list of waypoints
 		moveFoldout = EditorGUILayout.Foldout(moveFoldout, "list");
 		if(moveFoldout)
 		{
 			EditorGUI.indentLevel++;
 
+            //Display layout of the individual list item
 			for(int i = 0; i < movements.Count; i++)
 			{
+                //List item location
+                EditorGUILayout.LabelField("Movement Waypoint " + i);
+                //enum type popup and selection
 				movements[i].moveType = (MovementTypes)EditorGUILayout.EnumPopup(movements[i].moveType);
-			}
+                EditorGUI.indentLevel++;
+                EditorGUILayout.BeginVertical();
+                //changes for the different item types
+                switch(movements[i].moveType)
+                {
+                    //bezier curve, displays and stores information
+                    case MovementTypes.BEZIER:
+                        movements[i].movementTime = (float)
+                            EditorGUILayout.FloatField("Time to Move:", movements[i].movementTime);
+                        movements[i].endWaypoint = (GameObject)
+                            EditorGUILayout.ObjectField("End Waypoint", movements[i].endWaypoint, typeof(GameObject), true);
+                        movements[i].curveWaypoint = (GameObject)
+                            EditorGUILayout.ObjectField("Curve Waypoint", movements[i].curveWaypoint, typeof(GameObject), true);
+                        break;
+                    //straight line move, displays and stores information
+                    case MovementTypes.MOVE:
+                        movements[i].movementTime = (float)
+                            EditorGUILayout.FloatField("Time to Move:", movements[i].movementTime);
+                        movements[i].endWaypoint = (GameObject)
+                            EditorGUILayout.ObjectField("End Waypoint", movements[i].endWaypoint, typeof(GameObject), true);
+                        break;
+                    //wait in place, displays and stores time
+                    case MovementTypes.WAIT:
+                        movements[i].movementTime = (float)
+                            EditorGUILayout.FloatField("Time to Wait:", movements[i].movementTime);
+                        break;
+                    default:
+                        Debug.Log("Error with Movement Waypoint Switch.");
+                        break;
+                }//end movement waypoint switch statement
 
-			EditorGUI.indentLevel--;
-		}
+                //buttons to insert and remove items
+                EditorGUILayout.BeginHorizontal();
+
+                if (GUILayout.Button("Insert Item"))
+                {
+                    movements.Insert(i, new ScriptMovements());
+                }
+                if (GUILayout.Button("Remove Item"))
+                {
+                    movements.RemoveAt(i);
+                }
+
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.EndVertical();
+                EditorGUI.indentLevel--;
+
+			}//end individual waypoints for loop
+            
+            //button to add new element at end of list.
+            if (GUILayout.Button("Add New Item"))
+            {
+                movements.Add(new ScriptMovements());
+            }
+
+            EditorGUI.indentLevel--;
+		}//end movement foldout
 
 		EditorGUILayout.EndVertical();
 		//end movement waypoint window
-		//start facing waypoint window
+		
+        //start facing waypoint window
 		EditorGUILayout.BeginVertical();
 
+        //if there are no items in the list add one item to avoid errors
 		if(facings.Count == 0)
 			facings.Add (new ScriptFacings());
+
+        //overall display
 		EditorGUILayout.LabelField("Facing Waypoints");
 		EditorGUILayout.LabelField("Size: " + facings.Count);
+
+        //foldout list option
 		faceFoldout = EditorGUILayout.Foldout(faceFoldout, "list");
 		if(faceFoldout)
 		{
 			EditorGUI.indentLevel++;
 
+            //for every individual facing item
 			for(int i = 0; i < facings.Count; i++)
 			{
-				facings[i].facingType = (FacingTypes)EditorGUILayout.EnumPopup(facings[i].facingType);
+                //display item number
+                EditorGUILayout.LabelField("Facing Waypoint " + i);
+                //display editable popup menu of item type
+                facings[i].facingType = (FacingTypes)EditorGUILayout.EnumPopup(facings[i].facingType);
+                EditorGUI.indentLevel++;
 
-			}
+                //shows the individual item type variables
+                switch(facings[i].facingType)
+                {
+                    //displays editable time for free look
+                    case FacingTypes.FREELOOK:
+                        facings[i].facingTime = (float)
+                            EditorGUILayout.FloatField("Time to Face:", facings[i].facingTime);
+                        break;
+                    //displays the one node of the Look At element with separate times to rotate to and lock on target
+                    case FacingTypes.LOOKAT:
+                        //if no elements exist in arrays, make one for each applicable array.
+                        if(facings[i].targets.Length == 0)
+                        {
+                            facings[i].targets = new GameObject[1];
+                            facings[i].rotationSpeed = new float[1];
+                            facings[i].lockTimes = new float[1];
+                        }
+                        //ask if waypoint turns character instead of camera
+                        facings[i].turnPlayer = (bool)
+                            EditorGUILayout.Toggle("Turn Player?", facings[i].turnPlayer);
 
-			EditorGUI.indentLevel--;
-		}
+                        //display editable features 
+                        facings[i].targets[0] = (GameObject)
+                            EditorGUILayout.ObjectField("Target:", facings[i].targets[0], typeof(GameObject), true);
+                        facings[i].rotationSpeed[0] = (float)
+                            EditorGUILayout.FloatField("Rotation Time:", facings[i].rotationSpeed[0]);
+                        facings[i].lockTimes[0] = (float)
+                            EditorGUILayout.FloatField("Locked Time:", facings[i].lockTimes[0]);
+                        break;
+                    //displays the series of nodes of the Look Chain array
+                    case FacingTypes.LOOKCHAIN:
+                        //ask if waypoint turns player instead of camera
+                        facings[i].turnPlayer = (bool)
+                            EditorGUILayout.Toggle("Turn Player?", facings[i].turnPlayer);
+                        //if no elements exist in arrays, create array of one each.
+                        if (facings[i].targets.Length == 0)
+                        {
+                            facings[i].targets = new GameObject[1];
+                            facings[i].rotationSpeed = new float[1];
+                            facings[i].lockTimes = new float[1];
+                        }
+
+                        //for each element of list, display element location and editable variables
+                        EditorGUILayout.LabelField("Size: " + facings[i].targets.Length);
+                        for (int j = 0; j < facings[i].targets.Length; j++)
+                        {
+                            EditorGUI.indentLevel++;
+                            EditorGUILayout.LabelField("Item " + j);
+                            facings[i].targets[j] = (GameObject)
+                                EditorGUILayout.ObjectField("Target:", facings[i].targets[j], typeof(GameObject), true);
+                            facings[i].rotationSpeed[j] = (float)
+                                EditorGUILayout.FloatField("Rotation Time:", facings[i].rotationSpeed[j]);
+                            facings[i].lockTimes[j] = (float)
+                                EditorGUILayout.FloatField("Locked Time:", facings[i].lockTimes[j]);
+                            EditorGUI.indentLevel--;
+                        }
+                        break;
+                    //display editable wait time for Wait waypoint
+                    case FacingTypes.WAIT:
+                        facings[i].facingTime = (float)
+                            EditorGUILayout.FloatField("Time to Face:", facings[i].facingTime);
+                        break;
+                    default:
+                        Debug.Log("Error with Facing Waypoint Switch.");
+                        break;
+                }//end facing waypoint switch statement
+
+                //Buttons for inserting or removing individual list items
+                EditorGUILayout.BeginHorizontal();
+
+                if(GUILayout.Button("Insert Item"))
+                {
+                    facings.Insert(i, new ScriptFacings());
+                }
+                if(GUILayout.Button("Remove Item"))
+                {
+                    facings.RemoveAt(i);
+                }
+
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUI.indentLevel--;
+
+            }//end for loop for individual facing waypoints
+
+            //button to add new element at end of list.
+            if(GUILayout.Button ("Add New Item"))
+            {
+                facings.Add(new ScriptFacings());
+            }
+
+            EditorGUI.indentLevel--;
+		}//end facing foldout
 
 		EditorGUILayout.EndVertical();
 		//end facing waypoint window
+
 		//start effects waypoint window
 		EditorGUILayout.BeginVertical();
 
+        //if no items are in effects list, add one.
 		if(effects.Count == 0)
 			effects.Add (new ScriptEffects());
+
+        //overall display for effects foldout
 		EditorGUILayout.LabelField("Effect Waypoints");
 		EditorGUILayout.LabelField("Size: " + effects.Count);
+        //foldout menu for effects
 		effectFoldout = EditorGUILayout.Foldout(effectFoldout, "list");
 		if(effectFoldout)
 		{
 			EditorGUI.indentLevel++;
-
+            //display for each individual list item
 			for(int i = 0; i < effects.Count; i++)
 			{
-				effects[i].effectType = (EffectTypes)EditorGUILayout.EnumPopup(effects[i].effectType);
+                //item location and editable display popup for item type
+                EditorGUILayout.LabelField("Effect Waypoint " + i);
+                effects[i].effectType = (EffectTypes)EditorGUILayout.EnumPopup(effects[i].effectType);
+                EditorGUI.indentLevel++;
+                //display for different item types' variables
+                switch(effects[i].effectType)
+                {
+                    //fade effect: editable fade in, hold, and fade out times with image scale
+                    case EffectTypes.FADE:
+                        effects[i].fadeInTime = (float)
+                            EditorGUILayout.FloatField("Fade In Time:", effects[i].fadeInTime);
+                        effects[i].effectTime = (float)
+                            EditorGUILayout.FloatField("Stay Time:", effects[i].effectTime);
+                        effects[i].fadeOutTime = (float)
+                            EditorGUILayout.FloatField("Fade Out Time:", effects[i].fadeOutTime);
+                        effects[i].imageScale = (float)
+                            EditorGUILayout.FloatField("Fade Scale:", effects[i].imageScale);
+                        if (effects[i].imageScale < 0f)
+                            effects[i].imageScale = 0f;
+                        break;
+                    //shake effect: editable time and magnitude
+                    case EffectTypes.SHAKE:
+                        effects[i].effectTime = (float)
+                            EditorGUILayout.FloatField("Effect Time:", effects[i].effectTime);
+                        effects[i].magnitude = (float)
+                            EditorGUILayout.FloatField("Magnitude:", effects[i].magnitude);
+                        break;
+                    //splatter effect: editable fade in, hold, and fade out times with image scale
+                    case EffectTypes.SPLATTER:
+                        effects[i].fadeInTime = (float)
+                            EditorGUILayout.FloatField("Fade In Time:", effects[i].fadeInTime);
+                        effects[i].effectTime = (float)
+                            EditorGUILayout.FloatField("Stay Time:", effects[i].effectTime);
+                        effects[i].fadeOutTime = (float)
+                            EditorGUILayout.FloatField("Fade Out Time:", effects[i].fadeOutTime);
+                        effects[i].imageScale = (float)
+                            EditorGUILayout.FloatField("Splatter Scale:", effects[i].imageScale);
+                        if (effects[i].imageScale < 0f)
+                            effects[i].imageScale = 0f;
+                        break;
+                    //wait effect: time to hold before new effect.
+                    case EffectTypes.WAIT:
+                        effects[i].effectTime = (float)
+                            EditorGUILayout.FloatField("Effect Wait Time:", effects[i].effectTime);
+                        break;
+                    default:
+                        Debug.Log("Error with Effect Type Switch.");
+                        break;
+                }
 
-			}
+                //show buttons to insert or remove individual list items
+                EditorGUILayout.BeginHorizontal();
 
-			EditorGUI.indentLevel--;
-		}
+                if (GUILayout.Button("Insert Item"))
+                {
+                    effects.Insert(i, new ScriptEffects());
+                }
+                if (GUILayout.Button("Remove Item"))
+                {
+                    effects.RemoveAt(i);
+                }
+
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUI.indentLevel--;
+
+            }//end individual effect waypoints for loop
+
+            //add new item to end of list
+            if(GUILayout.Button("Add New Item"))
+            {
+                effects.Add(new ScriptEffects());
+            }
+
+            EditorGUI.indentLevel--;
+		}//end effect foldout
 
 		EditorGUILayout.EndVertical();
 		//end effects waypoint window
 		EditorGUILayout.EndHorizontal();
 		//end overall window
-		/*
-		#region MOVEMENT
-		//Rect moveRect = new Rect(buffer, buffer, elementWidth, elementHeight);
-		Rect mlabRect = new Rect(currHoriztonal, currVertical, 200f, 17f);
-		EditorGUI.LabelField(mlabRect, "MOVEMENT WAYPOINTS");
-		currVertical += 20f;
-
-
-		Rect mSizeLabRect = new Rect(currHoriztonal, currVertical, 80f, 17f);
-		EditorGUI.LabelField(mSizeLabRect, "Size: " + movements.Count);
-		currVertical += 20f;
-
-		if(movements.Count == 0)
-			movements.Add (new ScriptMovements());
-
-
-
-		Rect moveElementRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
-		moveFoldout = EditorGUI.Foldout(moveElementRect, moveFoldout, "move 0");
-		currVertical += 20f;
-
-		currHoriztonal += 10f;
-		if(moveFoldout)
-		{
-			for(int i = 0; i < movements.Count; i++)
-			{
-
-				//Display the enum for the player to change -- uses EditorGUI.Popup
-				Rect moveTypeSelect = new Rect(currHoriztonal, currVertical, 200f, 17f);
-				movements[i].moveType = (MovementTypes)EditorGUI.EnumPopup(moveTypeSelect, movements[i].moveType);
-				currVertical += 20f;
-				currHoriztonal += 10f;
-
-				//THEN display settings for each movement type
-				switch(movements[i].moveType)
-				{
-					case MovementTypes.BEZIER:
-						//Rect bezierTypeRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
-						//EditorGUI.LabelField(bezierTypeRect, "BezierRawr");
-						//currVertical += 20f;
-						Rect bezTimeRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-						movements[i].movementTime = (float)
-							EditorGUI.FloatField(bezTimeRect, "Time to Move:", movements[i].movementTime);
-						currVertical += 20f;
-
-						Rect bezEndLabelRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-						EditorGUI.LabelField(bezEndLabelRect, "End Waypoint:");
-						currVertical += 20f;
-						Rect bezEndRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-						movements[i].endWaypoint = (GameObject)
-							EditorGUI.ObjectField(bezEndRect, movements[i].endWaypoint,typeof(GameObject), true);
-						currVertical += 20f;
-					
-						Rect bezCurLabelRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-						EditorGUI.LabelField(bezCurLabelRect, "Curve Waypoint:");
-						currVertical += 20f;
-						Rect bezCurRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-						movements[i].curveWaypoint = (GameObject)
-							EditorGUI.ObjectField(bezCurRect, movements[i].curveWaypoint,typeof(GameObject), true);
-						currVertical += 20f;
-				
-						break;
-					case MovementTypes.MOVE:
-						//Rect moveTypeRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
-						//EditorGUI.LabelField(moveTypeRect, "MoveRawr");
-						//currVertical += 20f;
-
-						Rect movTimeRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-						movements[i].movementTime = (float)
-							EditorGUI.FloatField(movTimeRect, "Time to Move:", movements[i].movementTime);
-						currVertical += 20f;
-					
-						Rect movEndLabelRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-						EditorGUI.LabelField(movEndLabelRect, "End Waypoint:");
-						currVertical += 20f;
-						Rect movEndRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-						movements[i].endWaypoint = (GameObject)
-							EditorGUI.ObjectField(movEndRect, movements[i].endWaypoint,typeof(GameObject), true);
-						currVertical += 20f;
-
-						break;
-					case MovementTypes.WAIT:
-						//Rect waitTypeRect = new Rect(currHoriztonal, currVertical, 180f, 51f);
-						//EditorGUI.LabelField(waitTypeRect, "WaitRawr");
-						//currVertical += 20f;
-					
-					Rect mTimeRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-					movements[i].movementTime = (float)
-						EditorGUI.FloatField(mTimeRect, "Time to Move:", movements[i].movementTime);
-					currVertical += 20f;
-
-						break;
-					default:
-						Debug.Log ("Oh, Crap! something done broke!");
-						break;
-				}//end switch statement for single elements
-				Rect addButtonRect = new Rect(currHoriztonal, currVertical, 180f, 17f);
-				EditorGUI.
-
-				currHoriztonal -= 10f;
-			}//end for loop for all elements
-			currHoriztonal -= 10f;
-
-		}//end if statement for Movement foldout.
-		#endregion
-
-		#region FACINGS
-		//Rect moveRect = new Rect(buffer, buffer, elementWidth, elementHeight);
-		Rect flabRect = new Rect((2 * buffer) + elementWidth, buffer, 200f, 17f);
-		EditorGUI.LabelField(flabRect, "FACING WAYPOINTS");
-
-		#endregion
-
-		#region EFFECTS
-		//Rect moveRect = new Rect(buffer, buffer, elementWidth, elementHeight);
-		Rect elabRect = new Rect((3 * buffer) + (2 * elementWidth), buffer, 200f, 17f);
-		EditorGUI.LabelField(elabRect, "EFFECT WAYPOINTS");
-		#endregion
-
-		//*/
-
 
 		//end of new code
 		#endregion
 		EditorGUILayout.EndScrollView();
-		#region Original Code
-		//Color deepGray = new Color(0.8f, 0.8f, 0.8f, 1f);
-		//int mainOffset = 10;
-		//float boxWidth = 250f;
-		//float boxHeight = 210f;
-		//int rectOffset = (int)boxWidth + 15;
-		//int drawOffset = 5;
-		
 
-		//create box for movement
-		//Rect moveRect = new Rect (mainOffset, mainOffset, boxWidth, boxHeight);
-		//Rect moveRect2 = new Rect (mainOffset + drawOffset, mainOffset + drawOffset, 
-		   //                        boxWidth - (float)(2 * drawOffset), 
-		   //                        boxHeight - (float)(2 * drawOffset));
-		//EditorGUI.Foldout(moveRect, 
-		/*
-		EditorGUI.DrawRect(moveRect, Color.black);
-		EditorGUI.DrawRect (moveRect2, deepGray);
-		Rect moveLabelRect = new Rect (mainOffset + drawOffset, mainOffset + drawOffset, 100f, 17f);
-		EditorGUI.LabelField (moveLabelRect, "Movement");
-		//*/
-		//create box for facings
-		//Rect faceRect = new Rect (mainOffset + rectOffset, mainOffset, boxWidth, boxHeight);
-		//Rect faceRect2 = new Rect (mainOffset + rectOffset + drawOffset, mainOffset + drawOffset, 
-		 //                          boxWidth - (float)(2 * drawOffset), 
-		 //                         boxHeight - (float)(2 * drawOffset));
-		/*
-		EditorGUI.DrawRect(faceRect, Color.black);
-		EditorGUI.DrawRect (faceRect2, deepGray);
-		Rect faceLabelRect = new Rect (mainOffset + rectOffset + drawOffset, mainOffset + drawOffset, 100f, 17f);
-		EditorGUI.LabelField (faceLabelRect, "Facing");
-		//*/
-		//create box for effects
-		//Rect effectRect = new Rect (mainOffset + (2 * rectOffset), mainOffset, boxWidth, boxHeight);
-		//Rect effectRect2 = new Rect (mainOffset + (2 * rectOffset) + drawOffset, mainOffset + drawOffset, 
-		   //                        boxWidth - (float)(2 * drawOffset), 
-		   //                        boxHeight - (float)(2 * drawOffset));
-		/*
-		EditorGUI.DrawRect(effectRect, Color.black);
-		EditorGUI.DrawRect (effectRect2, deepGray);
-		Rect effLabelRect = new Rect (mainOffset + (2 * rectOffset) + drawOffset, mainOffset + drawOffset, 100f, 17f);
-		EditorGUI.LabelField (effLabelRect, "Effects");
-		//*/
-		#endregion
 
-	}
+	}//end OnGUI()
+
 }

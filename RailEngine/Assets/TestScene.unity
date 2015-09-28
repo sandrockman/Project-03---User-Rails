@@ -374,8 +374,38 @@ MonoBehaviour:
     endWaypoint: {fileID: 847086023}
     curveWaypoint: {fileID: 2039012445}
     showInEditor: 1
-  facings: []
-  effects: []
+  facings:
+  - facingType: 0
+    targets: []
+    rotationSpeed: []
+    lockTimes: []
+    facingTime: 0
+    turnPlayer: 0
+  - facingType: 0
+    targets: []
+    rotationSpeed: []
+    lockTimes: []
+    facingTime: 0
+    turnPlayer: 0
+  - facingType: 0
+    targets: []
+    rotationSpeed: []
+    lockTimes: []
+    facingTime: 0
+    turnPlayer: 0
+  - facingType: 0
+    targets: []
+    rotationSpeed: []
+    lockTimes: []
+    facingTime: 0
+    turnPlayer: 0
+  effects:
+  - effectType: 0
+    effectTime: 0
+    fadeInTime: 0
+    fadeOutTime: 0
+    imageScale: 0
+    magnitude: 0
   cameraShakeScript: {fileID: 0}
   lookAtScript: {fileID: 0}
   fadeScript: {fileID: 0}
@@ -441,6 +471,7 @@ MonoBehaviour:
   rotateSpeed: []
   targets: []
   lockTime: []
+  facingTime: 0
 --- !u!1 &782213302 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 149040, guid: 0a58b6c91fc679343bc29576caa9e48a, type: 2}
@@ -736,6 +767,7 @@ MonoBehaviour:
   lockTime:
   - 2
   - 2
+  facingTime: 0
 --- !u!114 &1517750188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -821,6 +853,7 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
+  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
