@@ -189,7 +189,7 @@ public class EngineWindow : EditorWindow {
                         if(facings[i].targets.Length == 0)
                         {
                             facings[i].targets = new GameObject[1];
-                            facings[i].rotationSpeed = new float[1];
+                            facings[i].rotationSpeed = new float[2];
                             facings[i].lockTimes = new float[1];
                         }
                         //ask if waypoint turns character instead of camera
@@ -203,6 +203,9 @@ public class EngineWindow : EditorWindow {
                             EditorGUILayout.FloatField("Rotation Time:", facings[i].rotationSpeed[0]);
                         facings[i].lockTimes[0] = (float)
                             EditorGUILayout.FloatField("Locked Time:", facings[i].lockTimes[0]);
+						//show last item of rotation time array as time to rotate back to original orientation.
+						facings[i].rotationSpeed[1] = (float)
+							EditorGUILayout.FloatField("Return Rotate Time:", facings[i].rotationSpeed[1]);
                         break;
                     //displays the series of nodes of the Look Chain array
                     case FacingTypes.LOOKCHAIN:
@@ -213,7 +216,7 @@ public class EngineWindow : EditorWindow {
                         if (facings[i].targets.Length == 0)
                         {
                             facings[i].targets = new GameObject[1];
-                            facings[i].rotationSpeed = new float[1];
+                            facings[i].rotationSpeed = new float[2];
                             facings[i].lockTimes = new float[1];
                         }
 
@@ -231,6 +234,10 @@ public class EngineWindow : EditorWindow {
                                 EditorGUILayout.FloatField("Locked Time:", facings[i].lockTimes[j]);
                             EditorGUI.indentLevel--;
                         }
+						//show last item of rotation time array as time to rotate back to original orientation.
+						int endRotate = facings[i].rotationSpeed.Length -1;
+						facings[i].rotationSpeed[endRotate] = (float)
+							EditorGUILayout.FloatField("Return Rotate Time:", facings[i].rotationSpeed[endRotate]);
                         break;
                     //display editable wait time for Wait waypoint
                     case FacingTypes.WAIT:
