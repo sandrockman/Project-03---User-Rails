@@ -27,8 +27,8 @@ public class LevelExport : EditorWindow
 
     static void Init()
     {
-        if (LevelTransitionCheck.IsSceneOrigional)
-        {
+        //if (LevelTransitionCheck.IsSceneOrigional)
+        //{
             if (Selection.activeGameObject == null)
             {
                 System.Media.SystemSounds.Hand.Play();
@@ -62,12 +62,12 @@ public class LevelExport : EditorWindow
                     window.Show();
                 }
             }
-        }
-        else
-        {
-            EditorUtility.DisplayDialog("Scene Transitions not allowed",
-                "Level Export does not work during runtime after scene transitions.", "Acknowledge");
-        }
+        //}
+        //else
+        //{
+        //    EditorUtility.DisplayDialog("Scene Transitions not allowed",
+        //        "Level Export does not work during runtime after scene transitions.", "Acknowledge");
+        //}
     }
 
     void OnGUI()
